@@ -1,0 +1,12 @@
+---
+ansible_user: ubuntu
+clickhouse_version: "22.3.3.44"
+clickhouse_packages:
+  - clickhouse-client
+  - clickhouse-server
+  - clickhouse-common-static
+vector_version: "0.31.0"
+vector_config_file: "/opt/vector/config/vector.toml"
+vector_data_dir: "/var/lib/vector"
+vector_apps:
+  - {app_name: system_login, source_type: file, logs_path: /var/log/syslog, trans_type: filter, condition: "Started Session"}

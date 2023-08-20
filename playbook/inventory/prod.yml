@@ -1,13 +1,5 @@
 ---
-  el:
-    hosts:
-      centos7:
-        ansible_connection: docker
-  deb:
-    hosts:
-      ubuntu:
-        ansible_connection: docker
-  local:
-    hosts:
-      ubuntu_localhost:
-        ansible_connection: local
+clickhouse:
+  hosts:
+    clickhouse-01:
+      ansible_host: 51.250.66.161

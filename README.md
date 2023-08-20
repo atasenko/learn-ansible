@@ -1,30 +1,27 @@
-## Основная часть  
-#### 1 - запустить playbook, зафиксировать значение которое имеет факт some_fact  
-![Ansible fact = 12](img/ans_1_fact.png)  
-
-#### 2 - найти файл с переменными в котором задается найденное в первом пункте значение, изменить на "all default fact"  
-![Ansible new fact](img/ans_2_new_fact.png)  
-
-#### 3 - не понял как воспользоваться подготовленным окружением, создал свое. Для простоты запустил в разных окнах терминала:  
-sudo docker run -it --name=centos7 centos:7  
-sudo docker run -it --name=ubuntu ubuntu  
-И в ubuntu дополнительно  
-apt update && apt install python3  
-
-#### 4 - Запустить playbook для prod, зафиксировать полученные факты  
-![Ansible prod facts](img/ans_2_facts.png)  
-
-#### 5,6 - Изменить факты для обеих систем на "{{ old_fact }} default fact"  
-![Ansible change facts](img/ans_5_new_facts.png)  
-
-#### 7,8 - Зашифровать факты, запустить с паролем  
-Шифруем при помощи ansible-vault encrypt_string  
-Запускаем sudo ansible-playbook site.yml -i inventory/prod.yml --ask-vault-pass  
-![Ansible-vault string](img/ans_vault_string.png)  
-
-#### 9 - Найти и посмотреть при помощи ansible-doc список плагинов для подключения, выбрать подходящий для localhost  
-ansible-doc -t connection -l  
-Для работы на control node подходит ansible.builtin.local  
-
-#### 10-12 - Добавить новую группу хостов с localhost, запустить playbook, проверить факты  
-![Ansible localhost added](img/ans_local_facts.png)  
+#### Подготовка хоста.  
+Для создания хоста в этот раз использовал Terraform и Yandex Cloud. Уже была заготовлена Ubuntu, получил внешний IP, вписал в prod.yml, увидел что playbook рассчитан на Centos.  
+Решил быстренько переписать путь в репозиторий Clickhouse для deb пакетов и... Не нашел где их скачать. [Официальная документация](https://clickhouse.com/docs/ru/getting-started/install) дает [ссылку](https://packages.clickhouse.com/deb/pool/stable) если я хочу скачать пакеты вручную которая выдает Not found.  
+Ладно, меняю ОС на Centos 8 stream - получаю:
+"fatal: [clickhouse-01]: FAILED! => {"changed": false, "msg": "Failed to validate GPG signature for clickhouse-client-22.3.3.44-1.noarch: Package clickhouse-client-22.3.3.44.rpm is not signed"}"  
+на этапе установки любого из трех пакетов.  
+Решил не страдать с этими ошибками, а переписать весь [playbook](playbook/site.yml) для Ubuntu с установкой GPG ключа, репозитория и пакетов нужной версии.  
+Позже нашел путь к нужным дистрибутивам, но оставил как есть, для разнообразия подходов.  
+#### Дописать playbook.  
+Сделан еще один play Install Vector который:  
+1. Скачивает архив Vector (этап можно пропустить, модуль unarchive может скачать его сам если указать url архива вместо пути).  
+2. Создает директорию /opt/vector куда этот архив будет распакован.  
+3. Распаковывает архив в созданную выше директорию, проверяя наличие пути. Если папки уже созданы, данные не будут перезаписаны.  
+4. Собирает конфиг в формате toml из шаблона [vector.toml.tpl](playbook/vector.toml.tpl). Необходимые переменные указан в файле [vars.yml](playbook/group_vars/clickhouse/vars.yml). Переменная vector_apps может содержать несколько приложений, для каждого из них будут собраны собственные блоки в конфиге.  
+#### Проверить запуском ansible-lint site.yml.  
+Т.к. все ошибки синтаксиса и логики уже были устранены в процессе написания play, литер выдал только предупреждение:  
+![WARNING](img/ans2-1.png)  
+#### Запуск плейбука с флагом --check.  
+Для чистоты эксперимента предварительно очистил inventory запуском terraform destroy и создал заново.  
+Запуск завершился с ошибкой. Репозиторий фактически добавлен не был, поэтому поиск нужного пакета ничего не дает.  
+![check](img/ans2-2.png)  
+#### Запуск с флагом --diff.  
+Отображает подробные изменения которые были произведены при запуске плейбука:  
+![first](img/ans2-3_1.png)  
+![second](img/ans2-3_2.png)  
+При повторном запуске изменений нет:  
+![no_diff](img/ans2-3_3.png)  
