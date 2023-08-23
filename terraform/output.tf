@@ -9,7 +9,9 @@ output "hosts" {
 
 locals {
   servers = flatten([
-    yandex_compute_instance.vm[*]
+    yandex_compute_instance.clickhouse[*],
+    yandex_compute_instance.lighthouse[*],
+    yandex_compute_instance.vector[*]
     ]
   )
 }

@@ -1,7 +1,9 @@
 resource "local_file" "ansible_prod_hosts" {
   content = templatefile("${path.module}/prod.tftpl",
     {
-      servers    = yandex_compute_instance.vm.*
+      clickhouse = yandex_compute_instance.clickhouse.*,
+      lighthouse = yandex_compute_instance.lighthouse.*,
+      vector     = yandex_compute_instance.vector.*
     }
   )
 

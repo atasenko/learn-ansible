@@ -30,9 +30,21 @@ variable "env_name" {
   description = "VPC network&subnet name"
 }
 
-variable "vm_name" {
+variable "clickhouse_name" {
   type        = string
   default     = "clickhouse"
+  description = "example vm_ prefix"
+}
+
+variable "lighthouse_name" {
+  type        = string
+  default     = "lighthouse"
+  description = "example vm_ prefix"
+}
+
+variable "vector_name" {
+  type        = string
+  default     = "vector"
   description = "example vm_ prefix"
 }
 
@@ -41,7 +53,17 @@ variable "image_family" {
   default = "ubuntu-2004-lts"
 }
 
-variable "vm_web_resources" {
+variable "vm_clickhouse_resources" {
+  type = map(number)
+  default  = { cores = "2", memory = "4", core_fraction = "5" }
+}
+
+variable "vm_vector_resources" {
+  type = map(number)
+  default  = { cores = "2", memory = "4", core_fraction = "5" }
+}
+
+variable "vm_lighthouse_resources" {
   type = map(number)
   default  = { cores = "2", memory = "2", core_fraction = "5" }
 }
