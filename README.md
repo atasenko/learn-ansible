@@ -6,7 +6,7 @@
 2. Стандартным модулем apt устанавливает git и nginx.  
 3. Клонирует при помощи модуля git репозиторий Lighthouse заданный переменной lighthouse_repo в папку заданную lighthouse_dir.  
 4. Собирает конфиг nginx при помощи модуля template из шаблона [default.tpl](playbook/default.tpl).  
-5. Запускат nginx.  
+5. Запускает nginx.  
 #### Подготовить inventory.  
 Как и в прошлый раз, [prod.yml](playbook/inventory/prod.yml) собран автоматически из [шаблона](terraform/prod.tftpl) в процессе содания машин Terraform`ом.  
 Таким же образом можно подставлять новый внутренний IP ВМ Clickhouse в шаблон [vector.yml.tpl](playbook/vector.yml.tpl).  
