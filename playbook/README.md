@@ -17,3 +17,14 @@
 - task "Install git and Nginx" устанавливает необходимые для запуска Lighthouse пакеты (git и nginx).  
 - task "Clone Lighthouse" клонирует репозиторий Lighthouse в директорию веб-сервера nginx.  
 - task "Build Nginx config for Lighthouse" собирает конфиг nginx для запуска Lighthouse и уведомляет handler о необходимости запуска.  
+
+#### Переменные  
+- "clickhouse_version" версия clickhouse для установки.  
+- "vector_version" версия vector для установки.  
+- "vector_config_file" путь к конфигурационному файлу vector.  
+- "lighthouse_repo" репозиторий lighthouse для клонирования.  
+- "lighthouse_dir" директория веб-сервера для размещения сайта lighthouse.  
+- "lighthouse_nginx_config" имя и путь к файлу конфигурации сайта lighthouse на веб-сервере nginx.  
+
+#### Теги  
+Плейбук не содержит тегов.
