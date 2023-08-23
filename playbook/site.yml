@@ -53,7 +53,6 @@
     become: true
     ansible.builtin.apt:
       deb: "/tmp/vector-{{ vector_version }}-1_amd64.deb"
-    notify: Start Vector service
   - name: Build Vector config
     become: true
     ansible.builtin.template:
