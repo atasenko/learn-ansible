@@ -10,7 +10,7 @@
 - handler "Start Vector service" запускает (или перезапускает) сервис vector.  
 - task "Download Vector deb" скачивает дистрибутив vector из указанного в переменной места.  
 - task "Install Vector" устанавливает скачанный дистрибутив.  
-- task "Build Vector config" собирает конфиг vector из [шаблона](vector.yml.tpl) и уведомляет handler о необходимости запуска.  
+- task "Build Vector config" собирает конфиг vector из [шаблона](../../vector-role/vector-role/templates/vector.yml.tpl) и уведомляет handler о необходимости запуска.  
 
 #### Install Lighthouse со следующими handlers и tasks:  
 - handler "Start Nginx service" запускает (или перезапускает) сервис nginx.  

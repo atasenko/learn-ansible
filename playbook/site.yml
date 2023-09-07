@@ -1,92 +1,23 @@
 ---
 - name: Install Clickhouse
   hosts: clickhouse
-  handlers:
-  - name: Start clickhouse service
-    become: true
-    ansible.builtin.service:
-      name: clickhouse-server
-      state: restarted
-  tasks:
-  - name: Add clickhouse GPG key
-    become: true
-    ansible.builtin.apt_key:
-      keyserver: keyserver.ubuntu.com
-      id: 8919F6BD2B48D754
-  - name: Add clickhouse repo
-    become: true
-    ansible.builtin.apt_repository:
-      repo: deb https://packages.clickhouse.com/deb stable main
-      state: present
-  - name: Install clickhouse packages
-    become: true
-    ansible.builtin.apt:
-      pkg:
-      - "clickhouse-client={{ clickhouse_version }}"
-      - "clickhouse-server={{ clickhouse_version }}"
-      - "clickhouse-common-static={{ clickhouse_version }}"
-      state: present
-      update_cache: true
-    notify: Start clickhouse service
-  - name: Flush handlers
-    meta: flush_handlers
-  - name: Create database
-    ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
-    register: create_db
-    failed_when: create_db.rc != 0 and create_db.rc !=82
-    changed_when: create_db.rc == 0
+  remote_user: ubuntu
+  vars:
+    clickhouse_dbs_custom:
+      - { name: test1 }
+  roles:
+    - clickhouse
 
 - name: Install Vector
   hosts: vector
-  handlers:
-  - name: Start Vector service
-    become: true
-    ansible.builtin.service:
-      name: vector
-      state: restarted
-  tasks:
-  - name: Download Vector deb
-    ansible.builtin.get_url:
-      url: "https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_amd64.deb"
-      dest: "/tmp/vector-{{ vector_version }}-1_amd64.deb"
-  - name: Install Vector
-    become: true
-    ansible.builtin.apt:
-      deb: "/tmp/vector-{{ vector_version }}-1_amd64.deb"
-  - name: Build Vector config
-    become: true
-    ansible.builtin.template:
-      src: vector.yml.tpl
-      dest: "{{ vector_config_file }}"
-    notify: Start Vector service
-  - name: Flush handlers
-    meta: flush_handlers
+  remote_user: ubuntu
+  vars:
+    vector_version: latest
+  roles:
+    - vector
 
 - name: Install Lighthouse
   hosts: lighthouse
-  handlers:
-  - name: Start Nginx service
-    become: true
-    service:
-      name: nginx
-      state: restarted
-  tasks:
-  - name: Install git and Nginx
-    become: true
-    apt:
-      pkg:
-        - git
-        - nginx
-      state: present
-      update_cache: true
-  - name: Clone Lighthouse
-    become: true
-    git:
-      repo: "{{ lighthouse_repo }}"
-      dest: "{{ lighthouse_dir }}"
-  - name: Build Nginx config for Lighthouse
-    become: true
-    template:
-      src: default.tpl
-      dest: "{{ lighthouse_nginx_config }}"
-    notify: Start Nginx service
+  remote_user: ubuntu
+  roles:
+    - lighthouse

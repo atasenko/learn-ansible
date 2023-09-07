@@ -1,6 +1,0 @@
----
-vector_version: "0.31.0"
-vector_config_file: "/etc/vector/vector.yml"
-vector_data_dir: "/var/lib/vector"
-vector_apps:
-  - {app_name: logs, source_type: file, logs_path: /var/log/test}

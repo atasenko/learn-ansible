@@ -1,29 +1,8 @@
-#### Задание 0.  
-Допилил предыдущий плейбук. Вместо скачивания и распаковки архива (без установки) качаем и ставим *.deb, добавлен handler с перезапуском vector.  
-#### Дописать в playbook задачу установки и настройки Lighthouse.  
-Сделан еще один play Install Lighthouse который:  
-1. Содержит handler для перезапуска nginx.
-2. Стандартным модулем apt устанавливает git и nginx.  
-3. Клонирует при помощи модуля git репозиторий Lighthouse заданный переменной lighthouse_repo в папку заданную lighthouse_dir.  
-4. Собирает конфиг nginx при помощи модуля template из шаблона [default.tpl](playbook/default.tpl).  
-5. Запускает nginx.  
-#### Подготовить inventory.  
-Как и в прошлый раз, [prod.yml](playbook/inventory/prod.yml) собран автоматически из [шаблона](terraform/prod.tftpl) в процессе содания машин Terraform`ом.  
-Таким же образом можно подставлять новый внутренний IP ВМ Clickhouse в шаблон [vector.yml.tpl](playbook/vector.yml.tpl).  
-#### Проверить запуском ansible-lint site.yml.  
-Т.к. все ошибки синтаксиса и логики уже были устранены в процессе написания play, линтер выдал только предупреждение:  
-![WARNING](img/ans3-1.png)  
-#### Запуск плейбука с флагом --check.  
-Для чистоты эксперимента предварительно очистил inventory запуском terraform destroy и создал заново.  
-Для того чтоб обработать весь playbook добавлял в таски и хендлеры по мере появления ошибок параметр "ignore_errors: true".  
-Вот результат:  
-![check](img/ans3-2.png)  
-#### Запуск с флагом --diff.  
-Предварительно удалил все добавленные на предыдущем этапе "ignore_errors: true".  
-Все изменения которые были произведены при запуске плейбука собрал в [файл](ansible_diff.txt):  
-Lighthouse открывается, но, т.к. связка vector-clickhouse не доделана до работоспособного состояния, БД пустая.  
-![Lighthouse](img/ans3-3.png)  
-При повторном запуске изменений нет:  
-![no_diff](img/ans3-4.png)  
-#### Задание 9 (описание плейбука)  
-Находится в отдельном [README.md](playbook/README.md) файле.
+#### Описание  
+Предыдущий прейбук переработан для использования ролей:  
+- Созданы репозитории с ролями [Vector](https://github.com/atasenko/vector-role) и [Lighthouse](https://github.com/atasenko/lighthouse-role), в них перенесены tasks, handlers, vars.  
+- Добавлен файл [requirements.yml](playbook/requirements.yml) с перечислением необходимых для работы ролей.  
+- Удалены все лишние файлы и папки.  
+- [site.yml](playbook/site.yml) исправлен. В нем описана установка Clickhouse, Vector и Lighthouse с использованием ролей.  
+- В задании этого не было, но измененный плей отработал на тестовой инфраструктуре  
+![proof](img/ans4-1.png)
