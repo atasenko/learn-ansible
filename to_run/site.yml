@@ -1,0 +1,10 @@
+---
+- name: Test file module
+  hosts: localhost
+  collections:
+    - my_own_namespace.yandex_cloud_elk
+  vars:
+    path: "role_testfile.txt"
+    content: "Content inserted by role"
+  roles:
+    - my_file_module
